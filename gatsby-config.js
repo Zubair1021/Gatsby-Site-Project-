@@ -1,12 +1,12 @@
-/**
- * Configure your Gatsby site with this file.
- *
- * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/
- */
+// /**
+//  * Configure your Gatsby site with this file.
+//  *
+//  * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/
+//  */
 
-/**
- * @type {import('gatsby').GatsbyConfig}
- */
+// /**
+//  * @type {import('gatsby').GatsbyConfig}
+//  */
 module.exports = {
   siteMetadata: {
     title: `Gatsby Default Starter`,
@@ -41,3 +41,30 @@ module.exports = {
     },
   ],
 }
+
+// Task1
+
+module.exports = {
+  siteMetadata: {
+    title: "My Gatsby Site",
+    description: "A simple site built with Gatsby",
+    author: "Muhammad Zubair",
+  },
+}
+
+// Task2
+
+module.exports = {
+  plugins: [
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "posts",
+        path: `${__dirname}/src/posts/`,  // Path to your markdown files
+      },
+    },
+    "gatsby-transformer-remark",  // This processes markdown files
+  ],
+}
+
+module.exports = { plugins: ["gatsby-plugin-react-helmet"], };
