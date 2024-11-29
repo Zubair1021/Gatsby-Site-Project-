@@ -1,27 +1,23 @@
-/**
- * Implement Gatsby's Node APIs in this file.
- *
- * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/
- */
+const path = require("path");
+const { createFilePath } = require("gatsby-source-filesystem");
 
-/**
- * @type {import('gatsby').GatsbyNode['createPages']}
- */
-// exports.createPages = async ({ actions }) => {
-//   const { createPage } = actions
-//   createPage({
-//     path: "/using-dsg",
-//     component: require.resolve("./src/templates/using-dsg.js"),
-//     context: {},
-//     defer: true,
-//   })
-// }
+exports.onCreateNode = ({ node, actions, getNode }) => {
+  const { createNodeField } = actions;
 
-const path = require("path")
+  if (node.internal.type === "MarkdownRemark") {
+    const slug = createFilePath({ node, getNode, basePath: "posts" });
+    createNodeField({
+      node,
+      name: "slug",
+      value: slug,
+    });
+  }
+};
 
 exports.createPages = async ({ graphql, actions }) => {
-  const { createPage } = actions
+  const { createPage } = actions;
 
+  // Create blog post pages
   const result = await graphql(`
     query {
       allMarkdownRemark {
@@ -37,16 +33,28 @@ exports.createPages = async ({ graphql, actions }) => {
         }
       }
     }
-  `)
+  `);
+
+  if (result.errors) {
+    console.error(result.errors);
+    throw new Error("Error in GraphQL query");
+  }
 
   result.data.allMarkdownRemark.edges.forEach(({ node }) => {
     createPage({
       path: node.fields.slug, // URL path for the blog post
-      component: path.resolve("./src/templates/blog-post.js"), // Use blog-post.js as template
+      component: path.resolve("./src/templates/blog-post.js"), // Blog post template
       context: {
-        slug: node.fields.slug, // Pass the slug as context to the template
+        slug: node.fields.slug, // Pass slug as context
       },
-    })
-  })
-}
+    });
+  });
 
+  // Example DSG page
+  createPage({
+    path: "/using-dsg",
+    component: require.resolve("./src/templates/using-dsg.js"),
+    context: {},
+    defer: true,
+  });
+};
